@@ -67,29 +67,66 @@ function metQuota(date,activeTime){
 
     return active>=quota
 }
-function addShiftRecord(textFile, shiftObj) {
-    // TODO: Implement this function
+function addShiftRecord(textFile,shiftObj){
+
+    let data=fs.readFileSync(textFile,"utf8").trim()
+    let rows=data?data.split("\n"):[]
+
+    for(let r of rows){
+        let cols=r.split(",")
+        if(cols[0]===shiftObj.driverID && cols[2]===shiftObj.date)
+            return {}
+    }
+
+    let shiftDuration=getShiftDuration(shiftObj.startTime,shiftObj.endTime)
+    let idleTime=getIdleTime(shiftObj.startTime,shiftObj.endTime)
+    let activeTime=getActiveTime(shiftDuration,idleTime)
+    let quota=metQuota(shiftObj.date,activeTime)
+
+    let newObj={
+        ...shiftObj,
+        shiftDuration,
+        idleTime,
+        activeTime,
+        metQuota:quota,
+        hasBonus:false
+    }
+
+    let newRow=[
+        newObj.driverID,
+        newObj.driverName,
+        newObj.date,
+        newObj.startTime,
+        newObj.endTime,
+        shiftDuration,
+        idleTime,
+        activeTime,
+        quota,
+        false
+    ].join(",")
+
+    rows.push(newRow)
+
+    fs.writeFileSync(textFile,rows.join("\n"))
+
+    return newObj
 }
 
-// ============================================================
-// Function 6: setBonus(textFile, driverID, date, newValue)
-// textFile: (typeof string) path to shifts text file
-// driverID: (typeof string)
-// date: (typeof string) formatted as yyyy-mm-dd
-// newValue: (typeof boolean)
-// Returns: nothing (void)
-// ============================================================
-function setBonus(textFile, driverID, date, newValue) {
-    // TODO: Implement this function
-}
+function setBonus(textFile,driverID,date,newValue){
 
-// ============================================================
-// Function 7: countBonusPerMonth(textFile, driverID, month)
-// textFile: (typeof string) path to shifts text file
-// driverID: (typeof string)
-// month: (typeof string) formatted as mm or m
-// Returns: number (-1 if driverID not found)
-// ============================================================
+    let rows=fs.readFileSync(textFile,"utf8").trim().split("\n")
+
+    for(let i=0;i<rows.length;i++){
+        let cols=rows[i].split(",")
+
+        if(cols[0]===driverID && cols[2]===date){
+            cols[9]=String(newValue)
+            rows[i]=cols.join(",")
+        }
+    }
+
+    fs.writeFileSync(textFile,rows.join("\n"))
+}
 function countBonusPerMonth(textFile, driverID, month) {
     // TODO: Implement this function
 }
