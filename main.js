@@ -1,13 +1,35 @@
-const fs = require("fs");
+const fs = require("fs")
 
-// ============================================================
-// Function 1: getShiftDuration(startTime, endTime)
-// startTime: (typeof string) formatted as hh:mm:ss am or hh:mm:ss pm
-// endTime: (typeof string) formatted as hh:mm:ss am or hh:mm:ss pm
-// Returns: string formatted as h:mm:ss
-// ============================================================
-function getShiftDuration(startTime, endTime) {
-    // TODO: Implement this function
+function parseTime12(t){
+    let [time, period] = t.split(" ")
+    let [h,m,s] = time.split(":").map(Number)
+
+    if(period==="pm" && h!==12) h+=12
+    if(period==="am" && h===12) h=0
+
+    return h*3600+m*60+s
+}
+
+function formatTime(sec){
+    let h = Math.floor(sec/3600)
+    let m = Math.floor((sec%3600)/60)
+    let s = sec%60
+
+    m = String(m).padStart(2,"0")
+    s = String(s).padStart(2,"0")
+
+    return `${h}:${m}:${s}`
+}
+
+function parseHMS(t){
+    let [h,m,s] = t.split(":").map(Number)
+    return h*3600+m*60+s
+}
+
+function getShiftDuration(startTime,endTime){
+    let start=parseTime12(startTime)
+    let end=parseTime12(endTime)
+    return formatTime(end-start)
 }
 
 // ============================================================
