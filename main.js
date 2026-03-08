@@ -67,6 +67,7 @@ function metQuota(date,activeTime){
 
     return active>=quota
 }
+
 function addShiftRecord(textFile,shiftObj){
 
     let data=fs.readFileSync(textFile,"utf8").trim()
@@ -127,6 +128,7 @@ function setBonus(textFile,driverID,date,newValue){
 
     fs.writeFileSync(textFile,rows.join("\n"))
 }
+
 function countBonusPerMonth(textFile, driverID, month) {
 
     let rows = fs.readFileSync(textFile, "utf8").trim().split("\n");
