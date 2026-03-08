@@ -32,42 +32,41 @@ function getShiftDuration(startTime,endTime){
     return formatTime(end-start)
 }
 
-// ============================================================
-// Function 2: getIdleTime(startTime, endTime)
-// startTime: (typeof string) formatted as hh:mm:ss am or hh:mm:ss pm
-// endTime: (typeof string) formatted as hh:mm:ss am or hh:mm:ss pm
-// Returns: string formatted as h:mm:ss
-// ============================================================
-function getIdleTime(startTime, endTime) {
-    // TODO: Implement this function
+function getIdleTime(startTime,endTime){
+    let start=parseTime12(startTime)
+    let end=parseTime12(endTime)
+
+    let startDelivery=parseTime12("8:00:00 am")
+    let endDelivery=parseTime12("10:00:00 pm")
+
+    let idle=0
+
+    if(start < startDelivery)
+        idle += Math.min(end,startDelivery)-start
+
+    if(end > endDelivery)
+        idle += end-Math.max(start,endDelivery)
+
+    return formatTime(idle)
 }
 
-// ============================================================
-// Function 3: getActiveTime(shiftDuration, idleTime)
-// shiftDuration: (typeof string) formatted as h:mm:ss
-// idleTime: (typeof string) formatted as h:mm:ss
-// Returns: string formatted as h:mm:ss
-// ============================================================
-function getActiveTime(shiftDuration, idleTime) {
-    // TODO: Implement this function
+function getActiveTime(shiftDuration,idleTime){
+    let shift=parseHMS(shiftDuration)
+    let idle=parseHMS(idleTime)
+    return formatTime(shift-idle)
 }
 
-// ============================================================
-// Function 4: metQuota(date, activeTime)
-// date: (typeof string) formatted as yyyy-mm-dd
-// activeTime: (typeof string) formatted as h:mm:ss
-// Returns: boolean
-// ============================================================
-function metQuota(date, activeTime) {
-    // TODO: Implement this function
-}
+function metQuota(date,activeTime){
 
-// ============================================================
-// Function 5: addShiftRecord(textFile, shiftObj)
-// textFile: (typeof string) path to shifts text file
-// shiftObj: (typeof object) has driverID, driverName, date, startTime, endTime
-// Returns: object with 10 properties or empty object {}
-// ============================================================
+    let active=parseHMS(activeTime)
+
+    let quota=parseHMS("8:24:00")
+
+    if(date>="2025-04-10" && date<="2025-04-30")
+        quota=parseHMS("6:00:00")
+
+    return active>=quota
+}
 function addShiftRecord(textFile, shiftObj) {
     // TODO: Implement this function
 }
